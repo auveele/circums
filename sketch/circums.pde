@@ -30,7 +30,7 @@ class Circums {
       if (n_iterations > 0) {
         angleOld = angleNew;
         float min, b, angle;
-        int n = 200;
+        int n = 50;
         min = 255;
 
         for (int i=0; i<n; i++) {
@@ -119,6 +119,7 @@ class Circums {
 
     radius = min(w, h)/2;
     angleNew = random(2*PI);
+    n_iterations = default_iterations;
   }
 
 
