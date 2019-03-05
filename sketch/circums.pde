@@ -3,8 +3,8 @@ class Circums {
   // Variables
   int max_width = 800;
   int max_height = 800;
-  int default_iterations = 5000;
-  
+  int default_iterations = 10;
+  int screws_quantity = 200;
   
   boolean rendering = false;
   float radius;
@@ -118,11 +118,45 @@ class Circums {
     g2.strokeWeight(0.2);
 
     radius = min(w, h)/2;
-    angleNew = random(2*PI);
+    // angleNew = random(2*PI);
+    angleNew = PI;
     n_iterations = default_iterations;
+    draw_screws();
+  }
+  
+  /*
+    Dibujamos los tornillos
+  */
+  void draw_screws(){
+    PVector _screw = new PVector(0,0);
+    for(int i = 0; i < screws_quantity; i++){
+      _screw = get_screw(i);
+      g1.circle(_screw.x, _screw.y, 2);
+    }
   }
 
+  /*
+    Devuelve las cordenadas
+      del tornillo número _n
+      de un total _t tornillo
+      inscritos en un círculo de radio _r    
+  */
+  PVector get_screw(int _n) {    
+    PVector _screw = new PVector(0,0);
+    float angle;
+    
+    angle = (2*PI*_n) / screws_quantity;
+    _screw.x = radius * sin(angle) + w/2;
+    _screw.y = radius * cos(angle) + h/2;
+    return _screw;
+  }
+  
 
+
+  /*
+    PINTO LINEA
+    y SUBSTRAIGO A LA IMAGEN
+  */
   void drawChord(float a1, float a2) {
     float x1, y1, x2, y2;
     x1 = radius*sin(a1)+w/2;
@@ -133,6 +167,9 @@ class Circums {
     g2.line(x1, y1, x2, y2);
   }
 
+  /*
+    COMPRUEBO BRILLO DE LINEA
+  */
   float chordBrightness(float a1, float a2) {
     float x1, y1, x2, y2, x, y;
     x1 = radius*sin(a1)+w/2;
