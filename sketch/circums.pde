@@ -3,17 +3,20 @@ class Circums {
   // Variables
   int max_width = 800;
   int max_height = 800;
-  int default_iterations = 10;
+  int default_iterations = 5000;
   int screws_quantity = 200;
   
   boolean rendering = false;
   float radius;
-  float angleOld, angleNew;
+  // float angleOld, angleNew;
   int w, h;
   PImage img;
   PGraphics g1, g2;
 
   int n_iterations;
+  
+  int currentScreew, oldScreew;
+
 
   /*
     CONSTRUCTOR
@@ -28,28 +31,28 @@ class Circums {
     if (img == null) return;
     if (rendering == true) {
       if (n_iterations > 0) {
-        angleOld = angleNew;
-        float min, b, angle;
-        int n = 50;
+        oldScreew = currentScreew;
+        float min, b;
         min = 255;
 
-        for (int i=0; i<n; i++) {
-          angle = random(2*PI);
-          b = chordBrightness(angleOld, angle);
+        for (int i=0; i<screws_quantity; i++) {
+          if (i == oldScreew) continue;
+          if ((abs(i - oldScreew) < 10) || (abs(i - oldScreew) < (screws_quantity - 10))) continue;  
+          b = chordBrightness(oldScreew, i);
           if (b < min) {
             min = b;
-            angleNew = angle;
+            currentScreew = i;
           }
         }
 
         g1.beginDraw();
         g2.beginDraw();
-        drawChord(angleOld, angleNew);
+        drawChord(oldScreew, currentScreew);
         g1.endDraw();
         g2.endDraw();
 
         n_iterations--;
-        println(n_iterations);
+        println(n_iterations + " - " + "(" + oldScreew + " - " + currentScreew + ")");
       }
     }
   }
@@ -118,8 +121,8 @@ class Circums {
     g2.strokeWeight(0.2);
 
     radius = min(w, h)/2;
-    // angleNew = random(2*PI);
-    angleNew = PI;
+    currentScreew = (int)random(screws_quantity);
+    // angleNew = PI;
     n_iterations = default_iterations;
     draw_screws();
   }
@@ -157,12 +160,12 @@ class Circums {
     PINTO LINEA
     y SUBSTRAIGO A LA IMAGEN
   */
-  void drawChord(float a1, float a2) {
+  void drawChord(int _oldScreew, int _currentScreew) {
     float x1, y1, x2, y2;
-    x1 = radius*sin(a1)+w/2;
-    y1 = radius*cos(a1)+h/2;
-    x2 = radius*sin(a2)+w/2;
-    y2 = radius*cos(a2)+h/2;
+    x1 = get_screw(_oldScreew).x;
+    y1 = get_screw(_oldScreew).y;
+    x2 = get_screw(_currentScreew).x;
+    y2 = get_screw(_currentScreew).y;
     g1.line(x1, y1, x2, y2);
     g2.line(x1, y1, x2, y2);
   }
@@ -170,12 +173,12 @@ class Circums {
   /*
     COMPRUEBO BRILLO DE LINEA
   */
-  float chordBrightness(float a1, float a2) {
+  float chordBrightness(int _oldScreew, int _currentScreew) {
     float x1, y1, x2, y2, x, y;
-    x1 = radius*sin(a1)+w/2;
-    y1 = radius*cos(a1)+h/2;
-    x2 = radius*sin(a2)+w/2;
-    y2 = radius*cos(a2)+h/2;
+    x1 = get_screw(_oldScreew).x;
+    y1 = get_screw(_oldScreew).y;
+    x2 = get_screw(_currentScreew).x;
+    y2 = get_screw(_currentScreew).y;
 
     int nSteps = 200;
     float sum = 0;
