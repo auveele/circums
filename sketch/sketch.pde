@@ -1,7 +1,8 @@
 Circums c;
 ControlFrame cf;
+  
 
-
+PrintWriter output;
 static String[] file_path;  // Nombre de la imagen que cargas
 static String file_name;
 
@@ -10,6 +11,7 @@ void setup() {
   // Instanciamos
   c = new Circums();
   cf = new ControlFrame(this, 360, 720, "controlframe");
+  output = createWriter("temp.txt"); 
   
 
   // Tamaño inicial

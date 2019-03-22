@@ -90,7 +90,7 @@ public class ControlFrame extends PApplet {
     slider_iterations = cp5.addSlider("n_iterations")
       .plugTo(c, "n_iterations")
       .setRange(0, 10000)
-      .setValue(5000)
+      .setValue(1000)
       .setPosition(get_pixel_from_column(2, 0), get_pixel_from_column(6, 0))
       .setSize(get_pixel_from_column(8, 0), get_pixel_from_column(1, 0));
 

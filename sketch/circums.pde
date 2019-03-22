@@ -3,18 +3,19 @@ class Circums {
   // Variables
   int max_width = 800;
   int max_height = 800;
-  int default_iterations = 5000;
+  int default_iterations = 1000;
   int screws_quantity = 200;
+  int[] screws_count = new int[screws_quantity];
+  int max_count = 0;
   
   boolean rendering = false;
   float radius;
-  // float angleOld, angleNew;
   int w, h;
   PImage img;
   PGraphics g1, g2;
 
   int n_iterations;
-  
+  // Tornillos
   int currentScreew, oldScreew;
 
 
@@ -25,19 +26,20 @@ class Circums {
   }
 
   /*
-    
+     LOOP A PINTAR
    */
   void update() {
     if (img == null) return;
+    
     if (rendering == true) {
       if (n_iterations > 0) {
         oldScreew = currentScreew;
         float min, b;
         min = 255;
 
-        for (int i=0; i<screws_quantity; i++) {
+        for (int i=0; i < screws_quantity; i++) {
           if (i == oldScreew) continue;
-          if ((abs(i - oldScreew) < 10) || (abs(i - oldScreew) < (screws_quantity - 10))) continue;  
+          if (abs(i - oldScreew) < 15) continue;  
           b = chordBrightness(oldScreew, i);
           if (b < min) {
             min = b;
@@ -45,14 +47,15 @@ class Circums {
           }
         }
 
-        g1.beginDraw();
-        g2.beginDraw();
+        // PINTAMOS LINEA
         drawChord(oldScreew, currentScreew);
-        g1.endDraw();
-        g2.endDraw();
+        
 
         n_iterations--;
-        println(n_iterations + " - " + "(" + oldScreew + " - " + currentScreew + ")");
+        println(n_iterations + " - " + "(" + oldScreew + " - " + currentScreew + ") - " + screws_count[currentScreew] + "/" + max_count);
+        // guardo en el fichero el elemento
+        output.println(currentScreew);
+        output.flush(); // Writes the remaining data to the file
       }
     }
   }
@@ -121,10 +124,20 @@ class Circums {
     g2.strokeWeight(0.2);
 
     radius = min(w, h)/2;
+    // primer elemento aleatorio
     currentScreew = (int)random(screws_quantity);
+    // guardo en el fichero el elemento
+    output.println(currentScreew);
     // angleNew = PI;
     n_iterations = default_iterations;
+    // Dibujamos tornillos
     draw_screws();
+    // Limpiamos cuenta de tornillos
+    max_count = 0;
+    for (int i = 0; i < screws_quantity; i++){
+      screws_count[i] = 0;
+    }
+    
   }
   
   /*
@@ -166,8 +179,20 @@ class Circums {
     y1 = get_screw(_oldScreew).y;
     x2 = get_screw(_currentScreew).x;
     y2 = get_screw(_currentScreew).y;
+
+    // Sumamos uno a la cuenta
+    screws_count[_currentScreew]++;
+    if ( screws_count[_currentScreew] > max_count){
+      max_count = screws_count[_currentScreew]; 
+    }
+    
+    g1.beginDraw();
     g1.line(x1, y1, x2, y2);
+    g1.endDraw();
+        
+    g2.beginDraw();
     g2.line(x1, y1, x2, y2);
+    g2.endDraw();
   }
 
   /*
@@ -191,10 +216,6 @@ class Circums {
     return sum;
   }
 
-  void render_on() {
-    rendering = true;
-  }
-  void render_off() {
-    rendering = false;
-  }
+  void render_on() {  rendering = true; }
+  void render_off() { rendering = false; }
 }
